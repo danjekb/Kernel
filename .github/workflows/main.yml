@@ -8,7 +8,7 @@ on:
         required: true
         default: 'bpf'
       new_branch:
-        description: 'Nazwa nowej gałęzi (jeśli chcesz utworzyć nową, zostaw puste aby commitować na target_branch)'
+        description: 'Nazwa nowej gałęzi (opcjonalnie)'
         required: false
         default: ''
 
@@ -30,12 +30,41 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-      - name: Create new branch if requested
+      - name: Create new branch (if specified)
         if: github.event.inputs.new_branch != ''
         run: git checkout -b ${{ github.event.inputs.new_branch }}
 
-      - name: Apply patch1 (sys.c)
-        run: git apply --3way patch1.patch
+      # Naprawa końcówek linii i usunięcie zbędnych znaków
+      - name: Fix patch files (convert CRLF -> LF)
+        run: |
+          for f in patch1.patch patch2.patch patch3.patch; do
+            if [ -f "$f" ]; then
+              echo "Poprawiam $f"
+              sed -i 's/\r$//' "$f"
+              # Opcjonalnie: usuń niewidoczne znaki (np. BOM)
+              sed -i '1s/^\xEF\xBB\xBF//' "$f"
+            else
+              echo "Błąd: Brak pliku $f"
+              exit 1
+            fi
+          done
+
+      # Wyświetlenie pierwszych linii dla diagnostyki (możesz wyłączyć)
+      - name: Show first lines of patch1.patch
+        run: head -n 25 patch1.patch
+
+      - name: Apply patch1 (sys.c) with git apply (try 3-way)
+        id: apply1
+        continue-on-error: true
+        run: git apply --3way --ignore-whitespace patch1.patch
+
+      - name: If git apply fails, use patch as fallback
+        if: steps.apply1.outcome == 'failure'
+        run: |
+          echo "git apply nie zadziałało, próbuję patch -p1"
+          patch -p1 < patch1.patch
+          # Po patchu musimy dodać zmiany ręcznie (git add)
+          git add -A
 
       - name: Commit patch1
         run: |
@@ -43,8 +72,17 @@ jobs:
           git commit -m "kernel: fake uname for selected processes in sys_newuname" \
                        -m "Override uname() release string to 5.10.200 for bpfloader, netd, etc."
 
-      - name: Apply patch2 (Kconfig)
-        run: git apply --3way patch2.patch
+      # Analogicznie dla patch2
+      - name: Apply patch2 (Kconfig) with git apply
+        id: apply2
+        continue-on-error: true
+        run: git apply --3way --ignore-whitespace patch2.patch
+
+      - name: Fallback patch2
+        if: steps.apply2.outcome == 'failure'
+        run: |
+          patch -p1 < patch2.patch
+          git add -A
 
       - name: Commit patch2
         run: |
@@ -52,8 +90,17 @@ jobs:
           git commit -m "init/Kconfig: add FAKE_UNAME configuration option" \
                        -m "Allows selecting fake kernel version (5.4, 5.10, or 5.15) for Android BPF compatibility."
 
-      - name: Apply patch3 (defconfig)
-        run: git apply --3way patch3.patch
+      # Analogicznie dla patch3
+      - name: Apply patch3 (defconfig) with git apply
+        id: apply3
+        continue-on-error: true
+        run: git apply --3way --ignore-whitespace patch3.patch
+
+      - name: Fallback patch3
+        if: steps.apply3.outcome == 'failure'
+        run: |
+          patch -p1 < patch3.patch
+          git add -A
 
       - name: Commit patch3
         run: |
