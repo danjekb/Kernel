@@ -1,0 +1,35 @@
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -XXX,XX +XXX,XX @@ config ARCH_HAS_SYSCALL_WRAPPER
+ 	def_bool n
+ 
++config FAKE_UNAME
++	bool "Fake uname for Android BPF compatibility"
++	help
++	  This option allows the kernel to report a fake (newer) kernel release
++	  string to specific userspace processes (e.g. bpfloader, netd) that
++	  require a higher version than the actual kernel. The fake version is
++	  used only in the uname() system call for selected processes.
++
++	  If unsure, say N.
++
++choice
++	prompt "Fake uname version"
++	depends on FAKE_UNAME
++	default FAKE_UNAME_5_10
++	help
++	  Select which kernel version string should be reported when fake uname
++	  is active.
++
++config FAKE_UNAME_5_4
++	bool "5.4"
++
++config FAKE_UNAME_5_10
++	bool "5.10"
++
++config FAKE_UNAME_5_15
++	bool "5.15"
++
++endchoice
++
+ source "init/Kconfig.gki"

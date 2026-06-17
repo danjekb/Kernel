@@ -1,0 +1,21 @@
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -1006,6 +1006,19 @@ SYSCALL_DEFINE1(newuname, struct new_utsname __user *, name)
+ 
+ 	down_read(&uts_sem);
+ 	memcpy(&tmp, utsname(), sizeof(tmp));
++#ifdef CONFIG_FAKE_UNAME
++	if (!strncmp(current->comm, "bpfloader", 9) ||
++	    !strncmp(current->comm, "netbpfload", 10) ||
++	    !strncmp(current->comm, "netd", 4) ||
++	    !strncmp(current->comm, "uprobestats", 11)) {
++
++		strcpy(tmp.release, "5.10.200");
++
++		pr_info("fake uname: %s pid=%d release=%s\n",
++			current->comm, current->pid, tmp.release);
++	}
++#endif
+ #ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
+ 	if (static_branch_likely(&susfs_set_uname_key_true))
+ 		susfs_spoof_uname(&tmp);
