@@ -1,0 +1,69 @@
+name: Apply Kernel Patches
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_branch:
+        description: 'Gałąź źródłowa (np. bpf)'
+        required: true
+        default: 'bpf'
+      new_branch:
+        description: 'Nazwa nowej gałęzi (jeśli chcesz utworzyć nową, zostaw puste aby commitować na target_branch)'
+        required: false
+        default: ''
+
+jobs:
+  apply-patches:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.target_branch }}
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Create new branch if requested
+        if: github.event.inputs.new_branch != ''
+        run: git checkout -b ${{ github.event.inputs.new_branch }}
+
+      - name: Apply patch1 (sys.c)
+        run: git apply --3way patch1.patch
+
+      - name: Commit patch1
+        run: |
+          git add -A
+          git commit -m "kernel: fake uname for selected processes in sys_newuname" \
+                       -m "Override uname() release string to 5.10.200 for bpfloader, netd, etc."
+
+      - name: Apply patch2 (Kconfig)
+        run: git apply --3way patch2.patch
+
+      - name: Commit patch2
+        run: |
+          git add -A
+          git commit -m "init/Kconfig: add FAKE_UNAME configuration option" \
+                       -m "Allows selecting fake kernel version (5.4, 5.10, or 5.15) for Android BPF compatibility."
+
+      - name: Apply patch3 (defconfig)
+        run: git apply --3way patch3.patch
+
+      - name: Commit patch3
+        run: |
+          git add -A
+          git commit -m "arm64: defconfig: enable FAKE_UNAME for a52sxq"
+
+      - name: Push changes
+        run: |
+          if [ -n "${{ github.event.inputs.new_branch }}" ]; then
+            git push origin ${{ github.event.inputs.new_branch }}
+          else
+            git push origin ${{ github.event.inputs.target_branch }}
+          fi
