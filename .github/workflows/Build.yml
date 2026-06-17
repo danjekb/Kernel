@@ -46,6 +46,8 @@ jobs:
           chmod +x build_kernel_zip.sh
           # Bypass repo name check — not needed in CI
           sed -i '/android_kernel_samsung_sm7325_a52s_5g/d' build_kernel_zip.sh
+          # Override Clang URL
+          sed -i 's|CLANG_URL=.*|CLANG_URL="https://github.com/danjekb/tools/releases/download/clang/main-clang-r530567.tar.gz"|' build_kernel_zip.sh
           bash build_kernel_zip.sh
 
       - name: Find output zip
