@@ -2,7 +2,7 @@
 
 Based on **A528NKSU4GXE1** with backported changes from A73 5G (**A736BXXUAFYE6 / A736BXXUAGYJ1**), and additional cherry-picked backports and custom modifications
 
-Linux 5.4.289, built with Clang v19.0 (plus other compilation optimizations)
+Linux 5.4.289, built with Clang 19.0-r530567 (plus other compilation optimizations)
 
 [XDA thread](https://xdaforums.com/t/kernel-a528b-n-bone-machines-custom-android-kernel-with-kernelsu-next-v3-2-0-legacy-for-a52s-5g.4790917/)
 
@@ -10,8 +10,8 @@ Linux 5.4.289, built with Clang v19.0 (plus other compilation optimizations)
 
 ### Features
 
-- Implemented KSU-Next (**v3.2.0-legacy**) as the root solution, using manual hooks
-- Supports both AOSP and One UI 8 ROMs (works on Android 16; should work on other versions<sup>*</sup>)
+- Implemented KernelSU-Next as the root solution, using manual hooks
+- Supports both AOSP and One UI ROMs
 - Optimized for battery life and performance
 - Added a new GPU minimum frequency step, along with lower voltage and idle timeout values
 - Disabled several kernel debugging tools, flags, and features
@@ -20,8 +20,6 @@ Linux 5.4.289, built with Clang v19.0 (plus other compilation optimizations)
 - Switchable SELinux policy
 
 Other minor CPU and RAM tweaks (see commit history)
-
-<sup>* Does not work in One UI 6.</sup>
 
 **Disclaimer**: I am by no means a kernel developer; this is just a personal project. Consider this entire repository a curated collection of additions and modifications.
 
@@ -50,11 +48,8 @@ For ad-blocking, just use [bindhosts](https://github.com/bindhosts/bindhosts)
 
 Use this [KSU Module](https://github.com/user-attachments/files/25517721/A16StorageFix-v2.0.zip) if your apps can't save data in AOSP Android 16 ROMs. (There's also [this](https://github.com/omersusin/StorageFixer/) and [this](https://gist.github.com/Loukious/d7f6da0bdc13556d2cde84123fe4f794). Your pick)
 
-I have yet to find any app that complains about root while using [crDroid ROM](https://crdroid.net/a52sxq/12) for this device with KSU-Next manual hook implementation and Zygisk-Next.\
-I have no need to implement SUSFS (you can check [MySelly](https://github.com/crdroidandroid/android_kernel_nothing_sm7325)'s repo if you need to implement it and how to do so)
-
 # How to build
-Run `build_kernel_zip.sh` for a fully automated kernel build.
+Run `build_kernel_zip.sh` for a fully automated kernel build. Make sure to switch to your target ROM branch before running it
 
 The script downloads and extracts required build tools (`clang`, `magiskboot` and `avbtool`) into the local `toolchain/` directory. No system-wide installation is performed.
 
@@ -100,7 +95,7 @@ sudo apt update && sudo apt install -y \
 Most of the next steps are outdated, but it will still build successfully.
 
 ### Requirements
-- [Clang-v19-r530567](https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r530567.tar.gz)
+- [Clang-19-r530567](https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r530567.tar.gz)
 - [Magiskboot](https://github.com/topjohnwu/Magisk/releases/download/v30.7/Magisk-v30.7.apk)
 - [avbtool](https://android.googlesource.com/platform/external/avb/+/refs/heads/main/avbtool.py?format=TEXT)
 
@@ -238,9 +233,9 @@ git commit -m "Update KernelSU-Next to v3.2.0-legacy"
 ```
 
 # Credits (*)
-**salvogiangri** (kernel, UN1CA ROM), **Simon1511** (AOSP related changes), **Frax3r/utkustnr** (kernel, update-binary shell script and README.md instructions), **RisenID** (kernel), **saadelasfur** (kernel),  **MySelly** (crDroid's Nothing-Phone-1 kernel), **Haky86** (kernel A23 5G), **DrRoot85** (kernel S23), **0xSecureByte** (kernel msm-5.4), **rifsxd** (KSU-Next), **backslashxx** (Manual hook implementation for KSU-Next), **osm0sis** (Recovery Flashable Zip shell script), **ravindu644** (kernel compilation), **Samsung** (original kernel source code), **CodeLinaro** (kernel Qualcomm msm-5.4)
+**salvogiangri** (kernel, UN1CA ROM), **Simon1511** (AOSP related changes), **Frax3r/utkustnr** (kernel, update-binary shell script and README.md instructions), **RisenID** (kernel), **saadelasfur** (kernel),  **MySelly** (crDroid's Nothing-Phone-1 kernel, SUSFS implementation), **Haky86** (kernel A23 5G), **DrRoot85** (kernel S23), **0xSecureByte** (kernel msm-5.4), **rifsxd** (KSU-Next), **backslashxx** (Manual hook implementation for KSU-Next), **osm0sis** (Recovery Flashable Zip shell script), **ravindu644** (kernel compilation), **Samsung** (original kernel source code), **CodeLinaro** (kernel Qualcomm msm-5.4)
 
-**Testers**: **Ghostess**, **lolyou2137** (One UI kernel release), **Selbstschuss** (USB OTG)
+**Testers**: **Ghostess**, **lolyou2137** (One UI kernel release), **Selbstschuss** (USB OTG), **esmail15** (SUSFS)
 
 <sup>* There are several commits which do not have the original author's name. In most cases, you can find the source for each change inside each commit. In any case, I do not take credit for them.</sup>
 
