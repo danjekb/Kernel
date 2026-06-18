@@ -25,28 +25,30 @@ Other minor CPU and RAM tweaks (see commit history)
 
 # Installation
 
-1. Download the appropriate flashable .zip file from the [Releases](https://github.com/bone-machine/android_kernel_samsung_sm7325_a52s_5g/releases) page:
+1. Download the appropriate flashable .zip file from the [Releases](https://github.com/bone-machine/android_kernel_samsung_sm7325_a52s_5g/releases) page (for SUSFS or One UI 6 releases check [here](https://github.com/bone-machine/android_kernel_samsung_sm7325_a52s_5g/releases/tag/v3.2.0-legacy)):
    - `*_AOSP_*.zip` for AOSP-based ROMs
    - `*_One-UI_*.zip` for Samsung One UI ROMs
 2. Reboot into your recovery environment (see [TWRP](https://xdaforums.com/t/recovery-official-twrp-3-7-1-0-for-galaxy-a52s-5g.4488419/))
 3. Flash the .zip file
     - If this is your first time flashing the kernel, make sure to wipe Cache/Dalvik. Otherwise, you can skip this step
 4. Reboot
-5. Download the KernelSU-Next manager app [here](https://github.com/KernelSU-Next/KernelSU-Next/releases/download/v3.2.0/KernelSU_Next_v3.2.0_33129-release.apk) and install it
+5. Download the KernelSU-Next manager app [here](https://github.com/KernelSU-Next/KernelSU-Next/releases) and install it
     - If the KernelSU-Next Manager app reports "Unsupported", completely uninstall and reinstall it. Your existing modules will be preserved
 
-# Notes
-The following are optional recommendations; feel free to use any, all, or none of them.
+For SUSFS or One UI 6 releases, use [this](https://github.com/KernelSU-Next/KernelSU-Next/releases/download/v3.2.0/KernelSU_Next_v3.2.0_33129-release.apk) KernelSU-Next Manager app and [this](https://github.com/sidex15/susfs4ksu-module/releases/download/v1.5.2%2B_R27/ksu_module_susfs_1.5.2+.zip) SUSFS module.
 
-Use [mountify](https://github.com/backslashxx/mountify) as the primary metamodule
+# Notes
+Use [mountify](https://github.com/backslashxx/mountify) as the primary metamodule. If your KSU modules, such as GPU or audio driver modules, don't work, it's because you don't have a [metamodule](https://kernelsu.org/guide/metamodule.html) installed.
+
+Use this [KSU Module](https://github.com/user-attachments/files/25517721/A16StorageFix-v2.0.zip) if your apps can't save data in AOSP Android 16 ROMs. (There's also [this](https://github.com/omersusin/StorageFixer/) and [this](https://gist.github.com/Loukious/d7f6da0bdc13556d2cde84123fe4f794). Your pick)
+
+*The following are optional recommendations; feel free to use any, all, or none of them.*
 
 Update GPU drivers with this [KSU module](https://t.me/adrenolabsupport/242/1157). Newer versions of this module aren't compatible with this device. One notable issue is that you won't be able to upload stories on Instagram or send any media through DMs if you do update it. Stick with this one. You also need `mountify` for it to work
 
 Use [Zygisk-Next](https://github.com/Dr-TSNG/ZygiskNext), and this version of [LSPosed](https://t.me/LSPosed/314) if needed (check for newer versions on that Telegram group)
 
 For ad-blocking, just use [bindhosts](https://github.com/bindhosts/bindhosts)
-
-Use this [KSU Module](https://github.com/user-attachments/files/25517721/A16StorageFix-v2.0.zip) if your apps can't save data in AOSP Android 16 ROMs. (There's also [this](https://github.com/omersusin/StorageFixer/) and [this](https://gist.github.com/Loukious/d7f6da0bdc13556d2cde84123fe4f794). Your pick)
 
 # How to build
 Run `build_kernel_zip.sh` for a fully automated kernel build. Make sure to switch to your target ROM branch before running it
