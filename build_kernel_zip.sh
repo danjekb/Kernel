@@ -34,10 +34,10 @@ cleanup_tmp() {
 trap cleanup_tmp EXIT
 
 # ─── Hardcoded config ─────────────────────────────────────────────────────────
-AUTHOR="bone-machine"
+AUTHOR="dvnielek"
 DEVICE="a52sxq"
 # Change these to your own values before building
-KBUILD_BUILD_USER="bone-machine"
+KBUILD_BUILD_USER="dvnielek"
 KBUILD_BUILD_HOST="rios"
 CLANG_URL="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r530567.tar.gz"
 MAGISK_APK_URL="https://github.com/topjohnwu/Magisk/releases/download/v30.7/Magisk-v30.7.apk"
